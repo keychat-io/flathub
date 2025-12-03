@@ -1,0 +1,65 @@
+id: com.keychat.io
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.llvm20
+command: keychat
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+modules:
+  - name: keychat-app
+    buildsystem: simple
+    build-options:
+      arch:
+        x86_64:
+          env:
+            BUNDLE_PATH: build/linux/x64/release/bundle
+        aarch64:
+          env:
+            BUNDLE_PATH: build/linux/arm64/release/bundle
+      append-path: /usr/lib/sdk/llvm20/bin:/var/lib/flutter/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
+      env:
+        PUB_CACHE: /run/build/keychat/.pub-cache
+    build-commands:
+      - dart pub global activate melos 7.3.0
+      - melos bootstrap
+      # - sudo apt-get update -y && sudo apt-get upgrade -y
+      # - sudo apt-get install -y curl libcurl4-openssl-dev git unzip xz-utils zip libglu1-mesa libsecret-1-dev
+      # - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+
+        # # Step 2: Setup Rust
+        # if ! command -v rustup &> /dev/null; then
+        #     echo "Installing Rust..."
+        #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        #     source "$HOME/.cargo/env"
+        # fi
+      - rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+
+      - flutter --version
+        # Step 4: Install Protoc
+      - PROTOC_VERSION="29.3"
+      - if ! command -v protoc &> /dev/null; then echo "Installing Protoc ${PROTOC_VERSION}..."; PROTOC_ZIP="protoc-${PROTOC_VERSION}-linux-x86_64.zip"; curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP}"; sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc; sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'; rm -f $PROTOC_ZIP; fi
+      - protoc --version
+
+        # Step 6: Bootstrap melos
+      # - melos bootstrap
+      - cd packages/app/
+        # Step 7: Configure .env (if ENV_KEY is provided)
+      - echo "a=123" > .env
+      - flutter build linux --release --no-pub --verbose
+      - install -D $BUNDLE_PATH/keychat /app/bin/keychat
+      - cp -r $BUNDLE_PATH/lib /app/bin/lib
+      - cp -r $BUNDLE_PATH/data /app/bin/data
+    sources:
+      - type: git
+        url: https://github.com/keychat-io/keychat-app.git
+        commit: 572612a8d33bc3b88c226c3e24d81a66f66dde7c 
+      - type: git
+        url: https://github.com/flutter/flutter.git
+        tag: 3.38.3
+        dest: flutter

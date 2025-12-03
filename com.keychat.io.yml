@@ -1,0 +1,55 @@
+# Generated from flatpak-flutter.yml, do not edit
+# Visit the flatpak-flutter project at https://github.com/TheAppgineer/flatpak-flutter
+id: com.keychat.io
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.llvm20
+command: keychat
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+modules:
+  - name: keychat-app
+    buildsystem: simple
+    build-options:
+      arch:
+        x86_64:
+          env:
+            BUNDLE_PATH: build/linux/x64/release/bundle
+        aarch64:
+          env:
+            BUNDLE_PATH: build/linux/arm64/release/bundle
+      append-path: /usr/lib/sdk/llvm20/bin:/var/lib/flutter/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
+      env:
+        PUB_CACHE: /run/build/keychat/.pub-cache
+    build-commands:
+      - dart pub global activate melos 7.3.0
+      - melos bootstrap
+      - rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+      - setup-flutter.sh -C .
+      - flutter --version
+      - PROTOC_VERSION="29.3"
+      - if ! command -v protoc &> /dev/null; then echo "Installing Protoc ${PROTOC_VERSION}..."; PROTOC_ZIP="protoc-${PROTOC_VERSION}-linux-x86_64.zip"; curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP}"; sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc; sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'; rm -f $PROTOC_ZIP; fi
+      - protoc --version
+      - cd packages/app/
+      - echo "a=123" > .env
+      - flutter build linux --release --no-pub --verbose
+      - install -D $BUNDLE_PATH/keychat /app/bin/keychat
+      - cp -r $BUNDLE_PATH/lib /app/bin/lib
+      - cp -r $BUNDLE_PATH/data /app/bin/data
+    sources:
+      - pubspec-sources.json
+      - type: git
+        url: https://github.com/keychat-io/keychat-app.git
+        commit: 572612a8d33bc3b88c226c3e24d81a66f66dde7c
+      - type: patch
+        path: cargokit/run_build_tool.sh.patch
+        dest: .pub-cache/hosted/pub.dev/super_native_extensions-0.9.1/cargokit
+      - cargo-sources.json
+    modules:
+      - flutter-sdk-3.38.3.json
