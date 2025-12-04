@@ -1,19 +1,19 @@
 {
-    "super_native_extensions": {
-        "cargo_locks": [
-            "rust"
-        ],
-        "extra_pubspecs": [
-            "rust_builder/cargokit/build_tool"
-        ],
-        "manifest": {
-            "sources": [
-                {
-                    "type": "patch",
-                    "path": "cargokit/run_build_tool.sh.patch",
-                    "dest": "rust_builder/cargokit"
-                }
-            ]
+  "super_native_extensions": {
+    "cargo_locks": [
+      "$PUB_DEV/rust"
+    ],
+    "extra_pubspecs": [
+      "$PUB_DEV/cargokit/build_tool"
+    ],
+    "manifest": {
+      "sources": [
+        {
+          "type": "patch",
+          "path": "cargokit/run_build_tool.sh.patch",
+          "dest": "$PUB_DEV/cargokit"
         }
+      ]
     }
+  }
 }

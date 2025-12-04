@@ -43,8 +43,6 @@ modules:
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
         PUB_CACHE: /run/build/keychat-app/.pub-cache
-      build-args:
-        - --share=network
     build-commands:
       - protoc --version
       - setup-flutter.sh -C .
