@@ -6,6 +6,7 @@ runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.llvm20
+  - org.freedesktop.Sdk.Extension.rust-stable
 command: keychat
 finish-args:
   - --share=ipc
@@ -13,6 +14,17 @@ finish-args:
   - --socket=wayland
   - --device=dri
 modules:
+  - name: protobuf-compiler
+    buildsystem: cmake 
+    
+    config-opts:
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -Dprotobuf_BUILD_TESTS=OFF
+      
+    sources:
+      - type: archive
+        url: https://github.com/protocolbuffers/protobuf/releases/download/v33.1/protobuf-33.1.tar.gz
+        sha256: fda132cb0c86400381c0af1fe98bd0f775cb566cb247cdcc105e344e00acc30e
   - name: keychat-app
     buildsystem: simple
     build-options:
@@ -26,18 +38,17 @@ modules:
       append-path: /usr/lib/sdk/llvm20/bin:/var/lib/flutter/bin
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
-        PUB_CACHE: /run/build/keychat/.pub-cache
+        PUB_CACHE: /run/build/keychat-app/.pub-cache
     build-commands:
-      - dart pub global activate melos 7.3.0
-      - melos bootstrap
-      - rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+      # - dart pub global activate melos 7.3.0
+      # - melos bootstrap
+      - protoc --version
       - setup-flutter.sh -C .
       - flutter --version
-      - PROTOC_VERSION="29.3"
-      - if ! command -v protoc &> /dev/null; then echo "Installing Protoc ${PROTOC_VERSION}..."; PROTOC_ZIP="protoc-${PROTOC_VERSION}-linux-x86_64.zip"; curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP}"; sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc; sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'; rm -f $PROTOC_ZIP; fi
-      - protoc --version
+      # - PROTOC_VERSION="29.3"
       - cd packages/app/
       - echo "a=123" > .env
+      - pwd && ls
       - flutter build linux --release --no-pub --verbose
       - install -D $BUNDLE_PATH/keychat /app/bin/keychat
       - cp -r $BUNDLE_PATH/lib /app/bin/lib
