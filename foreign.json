@@ -1,17 +1,17 @@
 {
-  "super_native_extensions": {
+  "keychat_rust_ffi_plugin": {
     "cargo_locks": [
-      "$PUB_DEV/rust"
+      "packages/keychat_rust_ffi_plugin"
     ],
     "extra_pubspecs": [
-      "$PUB_DEV/cargokit/build_tool"
+      "packages/keychat_rust_ffi_plugin/cargokit/build_tool"
     ],
     "manifest": {
       "sources": [
         {
           "type": "patch",
           "path": "cargokit/run_build_tool.sh.patch",
-          "dest": "$PUB_DEV/cargokit"
+          "dest": "packages/keychat_rust_ffi_plugin/cargokit"
         }
       ]
     }

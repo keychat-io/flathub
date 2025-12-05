@@ -6,7 +6,6 @@ runtime-version: "25.08"
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.llvm20
-  - org.freedesktop.Sdk.Extension.rust-stable
 command: keychat
 finish-args:
   - --share=ipc
@@ -19,11 +18,9 @@ finish-args:
 modules:
   - name: protobuf-compiler
     buildsystem: cmake
-
     config-opts:
       - -DCMAKE_INSTALL_PREFIX=/app
       - -Dprotobuf_BUILD_TESTS=OFF
-
     sources:
       - type: archive
         url: https://github.com/protocolbuffers/protobuf/releases/download/v33.1/protobuf-33.1.tar.gz
@@ -39,17 +36,19 @@ modules:
         aarch64:
           env:
             BUNDLE_PATH: build/linux/arm64/release/bundle
-      append-path: /usr/lib/sdk/llvm20/bin:/var/lib/flutter/bin:/app/bin:/run/build/keychat-app/.pub-cache/bin
+      append-path: /usr/lib/sdk/llvm20/bin:/var/lib/rustup/bin:/var/lib/flutter/bin:/app/bin
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
+        CARGO_HOME: /var/lib/rustup
+        RUSTUP_HOME: /var/lib/rustup
         PUB_CACHE: /run/build/keychat-app/.pub-cache
+        PROTOC: /app/bin/protoc
     build-commands:
-      - protoc --version
       - setup-flutter.sh -C .
       - cd ../keychat_ecash && flutter pub get --offline
       - cd ../keychat_rust_ffi_plugin && flutter pub get --offline
       - echo "a=123" > .env
-      - flutter build linux --release --no-pub --verbose
+      - flutter build linux --release --target-platform=linux-x64 --no-pub --verbose
       - install -D $BUNDLE_PATH/keychat /app/bin/keychat
       - cp -r $BUNDLE_PATH/lib /app/bin/lib
       - cp -r $BUNDLE_PATH/data /app/bin/data
@@ -57,10 +56,12 @@ modules:
       - pubspec-sources.json
       - type: git
         url: https://github.com/keychat-io/keychat-app.git
-        commit: 572612a8d33bc3b88c226c3e24d81a66f66dde7c
+        commit: f3d7f8719790196bb9d6ac1e9c822a05284063d5
+        branch: flatapp
       - type: patch
         path: cargokit/run_build_tool.sh.patch
-        dest: .pub-cache/hosted/pub.dev/super_native_extensions-0.9.1/cargokit
+        dest: packages/keychat_rust_ffi_plugin/cargokit
       - cargo-sources.json
     modules:
+      - rustup-1.91.1.json
       - flutter-sdk-3.38.3.json
