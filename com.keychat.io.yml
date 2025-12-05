@@ -2,7 +2,7 @@
 # Visit the flatpak-flutter project at https://github.com/TheAppgineer/flatpak-flutter
 id: com.keychat.io
 runtime: org.freedesktop.Platform
-runtime-version: "25.08"
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.llvm20
@@ -62,6 +62,7 @@ modules:
         path: cargokit/run_build_tool.sh.patch
         dest: packages/keychat_rust_ffi_plugin/cargokit
       - cargo-sources.json
+      # - foreign.json
     modules:
-      - rustup-1.91.1.json
       - flutter-sdk-3.38.3.json
+      - rustup-1.91.1.json
