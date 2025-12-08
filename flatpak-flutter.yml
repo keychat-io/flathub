@@ -39,7 +39,7 @@ modules:
       append-path: /usr/lib/sdk/llvm20/bin:/var/lib/rustup/bin:/var/lib/flutter/bin:/app/bin
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
-        CARGO_HOME: /var/lib/rustup
+        cargo_HOME: /run/build/keychat-app/cargo
         RUSTUP_HOME: /var/lib/rustup
         PUB_CACHE: /run/build/keychat-app/.pub-cache
         PROTOC: /app/bin/protoc
@@ -55,7 +55,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/keychat-io/keychat-app.git
-        commit: f3d7f8719790196bb9d6ac1e9c822a05284063d5
+        commit: 7556c1ae61fc328381f2f7d628ded03d3b3a93f9
         branch: flatapp
       - type: git
         url: https://github.com/flutter/flutter.git

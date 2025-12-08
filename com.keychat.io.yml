@@ -2,7 +2,7 @@
 # Visit the flatpak-flutter project at https://github.com/TheAppgineer/flatpak-flutter
 id: com.keychat.io
 runtime: org.freedesktop.Platform
-runtime-version: '25.08'
+runtime-version: "25.08"
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.llvm20
@@ -39,11 +39,12 @@ modules:
       append-path: /usr/lib/sdk/llvm20/bin:/var/lib/rustup/bin:/var/lib/flutter/bin:/app/bin
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
-        CARGO_HOME: /var/lib/rustup
+        cargo_HOME: /run/build/keychat-app/cargo
         RUSTUP_HOME: /var/lib/rustup
         PUB_CACHE: /run/build/keychat-app/.pub-cache
         PROTOC: /app/bin/protoc
     build-commands:
+      - setup-flutter.sh -C .
       - setup-flutter.sh -C .
       - cd ../keychat_ecash && flutter pub get --offline
       - cd ../keychat_rust_ffi_plugin && flutter pub get --offline
@@ -56,13 +57,11 @@ modules:
       - pubspec-sources.json
       - type: git
         url: https://github.com/keychat-io/keychat-app.git
-        commit: f3d7f8719790196bb9d6ac1e9c822a05284063d5
+        commit: 7556c1ae61fc328381f2f7d628ded03d3b3a93f9
         branch: flatapp
       - type: patch
         path: cargokit/run_build_tool.sh.patch
-        dest: packages/keychat_rust_ffi_plugin/cargokit
+        dest: .pub-cache/hosted/pub.dev/super_native_extensions-0.9.1/cargokit
       - cargo-sources.json
-      # - foreign.json
     modules:
       - flutter-sdk-3.38.3.json
-      - rustup-1.91.1.json
