@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.keychat.io</id>
+  <name>Keychat</name>
+  <summary>Keychat is the super app for Bitcoiners.Autonomous IDs, Bitcoin ecash wallet, secure chat, and rich Mini Apps — all in Keychat.</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="io.keychat">
+    <name>Keychat Team</name>
+  </developer>
+  <description>
+    <p>
+      Keychat is the super app for Bitcoiners.
+      Autonomous IDs, Bitcoin ecash wallet, secure chat, and rich Mini Apps — all in Keychat.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.keychat.io.desktop</launchable>
+  <url type="homepage">https://keychat.io</url>
+  <url type="bugtracker">https://github.com/keychat-io/keychat-app/issues</url>
+  <url type="vcs-browser">https://github.com/keychat-io/keychat-app</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.keychat.io/assets/img/desktop1.png</image>
+      <caption>Keychat Application</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://www.keychat.io/assets/img/desktop2.png</image>
+      <caption>Keychat Application</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://www.keychat.io/assets/img/desktop3.png</image>
+      <caption>Keychat Application</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://www.keychat.io/assets/img/desktop4.png</image>
+      <caption>Keychat Application</caption>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.36.9" date="2025-12-12">
+      <description>
+        <p>Latest release with bug fixes and improvements.</p>
+      </description>
+    </release>
+  </releases>
+  <branding>
+    <color type="primary" scheme_preference="light">#ffffff</color>
+    <color type="primary" scheme_preference="dark">#1a1a1a</color>
+  </branding>
+</component>

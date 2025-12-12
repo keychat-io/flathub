@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Keychat
+Comment=Keychat is the super app for Bitcoiners.Autonomous IDs, Bitcoin ecash wallet, secure chat, and rich Mini Apps — all in Keychat.
+Exec=keychat
+Icon=com.keychat.io
+Terminal=false
+Type=Application
+Categories=Network;InstantMessaging;Chat;
+Keywords=chat;messaging;nostr;secure;
+StartupWMClass=keychat
