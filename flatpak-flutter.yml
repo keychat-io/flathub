@@ -1,3 +1,5 @@
+# Generated from flatpak-flutter.yml, do not edit
+# Visit the flatpak-flutter project at https://github.com/TheAppgineer/flatpak-flutter
 id: com.keychat.io
 runtime: org.freedesktop.Platform
 runtime-version: "25.08"
@@ -9,12 +11,13 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --share=network
-  - --device=all
-  - --socket=pulseaudio
   - --socket=session-bus
+  - --system-talk-name=org.freedesktop.NetworkManager
+  - --talk-name=org.freedesktop.secrets
   - --talk-name=org.freedesktop.Secret.Service
+  - --talk-name=org.gnome.keyring.*
   - --talk-name=org.freedesktop.Notifications
-  - --talk-name=org.freedesktop.Portal.*
+  - --filesystem=xdg-run/keyring
 modules:
   - name: protobuf-compiler
     buildsystem: cmake
@@ -45,20 +48,30 @@ modules:
         PROTOC: /app/bin/protoc
         CXXFLAGS: -Wno-error=deprecated-literal-operator
     build-commands:
-      # - touch ../../cargo/vendor/README.md
-      # - mkdir ../../cargo/vendor/store-sqlite && cd ../../cargo/vendor/store-sqlite && ln -s ../cashu-wallet-sqlite-aad7f95/migrations migrations
+      - touch ../../cargo/vendor/README.md
+      - mkdir ../../cargo/vendor/store-sqlite && cd ../../cargo/vendor/store-sqlite && ln -s ../cashu-wallet-sqlite-aad7f95/migrations migrations
       - echo "a=123" > .env
       - flutter build linux --release --target-platform=linux-x64 --no-pub --verbose
       - install -D $BUNDLE_PATH/keychat /app/bin/keychat
       - cp -r $BUNDLE_PATH/lib /app/bin/lib
       - cp -r $BUNDLE_PATH/data /app/bin/data
+      - install -Dm644 ../../com.keychat.io.png "${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png"
+      - install -Dm644 ../../com.keychat.io.png /app/share/icons/keychat.png
+      - install -Dm644 ../../com.keychat.io.desktop /app/share/applications/com.keychat.io.desktop
+      - install -Dm644 ../../com.keychat.io.metainfo.xml /app/share/metainfo/com.keychat.io.metainfo.xml
     sources:
       - type: git
         url: https://github.com/keychat-io/keychat-app.git
-        commit: d7fb114e0e86cb668f5b16afb2fb2e6b74035a97
+        commit: a29d6d4fc118e349f90855139a0be712efb01fc1
       - type: git
         url: https://github.com/flutter/flutter.git
         tag: 3.38.4
         dest: flutter
+      - type: file
+        path: com.keychat.io.desktop
+      - type: file
+        path: com.keychat.io.metainfo.xml
+      - type: file
+        path: com.keychat.io.png           
     modules:
       - rustup-1.91.1.json
