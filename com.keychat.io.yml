@@ -2,19 +2,21 @@
 # Visit the flatpak-flutter project at https://github.com/TheAppgineer/flatpak-flutter
 id: com.keychat.io
 runtime: org.freedesktop.Platform
-runtime-version: "25.08"
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.llvm20
 command: keychat
 finish-args:
-  - --share=ipc
   - --socket=fallback-x11
   - --socket=wayland
   - --share=network
   - --device=all
   - --socket=pulseaudio
-  - --filesystem=home
+  - --socket=session-bus
+  - --talk-name=org.freedesktop.Secret.Service
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.freedesktop.Portal.*
 modules:
   - name: protobuf-compiler
     buildsystem: cmake
@@ -39,16 +41,16 @@ modules:
       append-path: /usr/lib/sdk/llvm20/bin:/var/lib/rustup/bin:/var/lib/flutter/bin:/app/bin
       prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
       env:
-        cargo_HOME: /run/build/keychat-app/cargo
+        CARGO_HOME: /run/build/keychat-app/cargo
         RUSTUP_HOME: /var/lib/rustup
         PUB_CACHE: /run/build/keychat-app/.pub-cache
         PROTOC: /app/bin/protoc
+        CXXFLAGS: -Wno-error=deprecated-literal-operator
     build-commands:
-      - setup-flutter.sh -C .
-      - setup-flutter.sh -C .
-      - cd ../keychat_ecash && flutter pub get --offline
-      - cd ../keychat_rust_ffi_plugin && flutter pub get --offline
+      - touch ../../cargo/vendor/README.md
+      - mkdir ../../cargo/vendor/store-sqlite && cd ../../cargo/vendor/store-sqlite && ln -s ../cashu-wallet-sqlite-aad7f95/migrations migrations
       - echo "a=123" > .env
+      - setup-flutter.sh -C .
       - flutter build linux --release --target-platform=linux-x64 --no-pub --verbose
       - install -D $BUNDLE_PATH/keychat /app/bin/keychat
       - cp -r $BUNDLE_PATH/lib /app/bin/lib
@@ -57,11 +59,14 @@ modules:
       - pubspec-sources.json
       - type: git
         url: https://github.com/keychat-io/keychat-app.git
-        commit: 7556c1ae61fc328381f2f7d628ded03d3b3a93f9
-        branch: flatapp
+        commit: d7fb114e0e86cb668f5b16afb2fb2e6b74035a97
+      - type: patch
+        path: cargokit/run_build_tool.sh.patch
+        dest: packages/keychat_rust_ffi_plugin/cargokit
       - type: patch
         path: cargokit/run_build_tool.sh.patch
         dest: .pub-cache/hosted/pub.dev/super_native_extensions-0.9.1/cargokit
       - cargo-sources.json
     modules:
-      - flutter-sdk-3.38.3.json
+      - rustup-1.91.1.json
+      - flutter-sdk-3.38.4.json
